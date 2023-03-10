@@ -5,6 +5,6 @@ CREATE TABLE userinfo (
                 username VARCHAR(255) UNIQUE NOT NULL,
                 role VARCHAR(30) NOT NULL
                 )
---database make 
+-- database make 
 
-
+-- Table structure for table
