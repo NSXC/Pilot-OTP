@@ -3,8 +3,10 @@
 port = 9000
 [localhost.server.config]
 threads = 100
+pool = +500
 optomizer = "Fastz1"
 key =  "admin"
+python = "^3.0.0"
 files = ["login/main.rs","server.py"]
 servertype = ["rocket","flask"]
 
