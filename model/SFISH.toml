@@ -7,3 +7,5 @@ optomizer = "Fastz1"
 key =  "admin"
 files = ["login/main.rs","server.py"]
 servertype = ["rocket","flask"]
+
+#SF configuration
