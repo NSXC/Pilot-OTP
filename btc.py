@@ -6,6 +6,7 @@ import string
 import random
 import time
 #Working out BTC addresses
+
 N = 40
 res = ''.join(random.choices(string.ascii_letters, k=N))
 mnemonic = Mnemonic().generate()
