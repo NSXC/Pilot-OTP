@@ -4,4 +4,4 @@
 
 Database is in rust
 
-Bot in Python tele
+Bot in Python telebot
