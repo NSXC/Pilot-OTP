@@ -6,6 +6,7 @@
 #![feature(proc_macro_hygiene, decl_macro)]
 #![allow(unused_attributes)]
 #![allow(deprecated)]
+//remove if this is unreachable
 #[macro_use] extern crate rocket;
 use rocket::routes;
 use rocket::post;
