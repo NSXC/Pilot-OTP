@@ -1,0 +1,16 @@
+[package]
+name = "login"
+version = "1.0.0"
+edition = "2021"
+
+[dependencies]
+mysql = "20.0.0"
+bcrypt = "0.10.1"
+rocket_contrib = "0.4.10"
+rocket = "0.4.10"
+
+
+
+
+[build-dependencies]
+pear_codegen = "0.1.5"

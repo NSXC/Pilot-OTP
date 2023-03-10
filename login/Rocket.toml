@@ -1,0 +1,9 @@
+[global]
+port = 7300
+[development]
+log = "debug"
+secret_key = "TYf/fTC8mYgO3aYWFpQg5fyvXAxZw0jOkgnpjOi1fEc="
+threads = 20
+[production]
+secret_key = "8Tedwkqbtes9Q1S63jOmAJNOynTaT8g8aRHSpt+b/2w="
+threads = 20
