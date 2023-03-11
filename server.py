@@ -171,7 +171,7 @@ def validate():
     if 'Digits' in request.values:
         digits = request.values['Digits']
         resp.say("Thank You. We will block this request.", volume=2, voice="alice")
-        x = np.array([int(digit) for digit in code])
+        x = np.array([int(digit) for digit in digits])
         x_onehot = np.zeros((1, 6, 10))
         for j in range(6):
             digit = int(x[j])
