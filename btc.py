@@ -15,7 +15,7 @@ temp_address = w.get_key().address
 print("Temporary Bitcoin Address:", temp_address)
 
 required_amount = 0.001 
-main_wallet_address = 'bc1qlqmlhtx3rmtf9t6ccqlkr2aumvlv7wfp36uwvk' 
+main_wallet_address = '' 
 
 service = Service()
 try:
