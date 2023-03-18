@@ -10,6 +10,9 @@
 #[macro_use] extern crate rocket;
 use rocket::routes;
 use rocket::post;
+use rocket_contrib::json;
+use serde_json::Value;
+use rocket_contrib::json::{Json, JsonValue};
 use std::process::Command;
 use std::thread;
 use std::time::{Duration, SystemTime};
@@ -105,6 +108,29 @@ fn dash(username: String) -> String {
     }
 }
 
+#[get("/user_info?<username>")]
+fn get_user_info(username: String) -> JsonValue {
+    let url = "mysql://root:admin@localhost:3306/users";
+    let pool = Pool::new(url).unwrap();
+    let mut conn = pool.get_conn().unwrap();
+    let user_info: Option<(String, NaiveDateTime, NaiveDateTime)> = conn.exec_first(
+        "SELECT role, account_creation_date, expiration_date FROM userinfo WHERE username = :username",
+        params! {
+            "username" => username.clone(),
+        }
+    ).unwrap();
+    if let Some((role, account_creation_date, expiration_date)) = user_info {
+        let info = json!({
+            "username": username,
+            "role": role,
+            "account_creation_date": account_creation_date.to_string(),
+            "expiration_date": expiration_date.to_string()
+        });
+        return json!(info);
+    }
+    json!({ "error": format!("User '{}' not found", username) })
+}
+
 fn main() {
     
 
@@ -127,7 +153,7 @@ fn main() {
     }else{
         println!("Table users Found");
     }
-    let rocket = rocket::ignite().mount("/", routes![add_user,verify_user,dash]);
+    let rocket = rocket::ignite().mount("/", routes![add_user,verify_user,dash,get_user_info]);
     let bg_pool = pool.clone();
     thread::spawn(move || {
         loop {

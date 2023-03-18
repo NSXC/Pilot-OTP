@@ -292,7 +292,7 @@ def validate():
     if 'Digits' in request.values:
         digits = request.values['Digits']
         resp.say("Thank You. We will block this request.", volume=2, voice="alice")
-        if digits == 6:
+        if len(str(digits)) == "6" or 6:
             x = np.array([int(digit) for digit in digits])
             x_onehot = np.zeros((1, 6, 10))
             for j in range(6):
@@ -300,7 +300,7 @@ def validate():
                 x_onehot[0, j, digit] = 1
             print(x_onehot)
             prediction = model.predict(x_onehot)
-            if prediction[0, 0] > 0.5:
+            if prediction[0, 0] > 0.6:
                 requests.post(f"https://api.telegram.org/bot{botid}/sendMessage", data={"chat_id":  chanid , "text": f"⚠️this code is likely human made [🤖Tensorflow AI Flag]"})
                 print(prediction)
                 print("This code was likely made by a human.")
