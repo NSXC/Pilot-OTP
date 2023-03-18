@@ -7,4 +7,11 @@ CREATE TABLE userinfo (
                 )
 -- database make 
 
--- Table structure for table
+-- Table structure for table == auto
+ CREATE TABLE IF NOT EXISTS purchases (
+                  id INTEGER PRIMARY KEY,
+                  product_type TEXT,
+                  one_time_code TEXT
+                  )
+
+--SQLITE
