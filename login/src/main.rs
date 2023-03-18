@@ -6,7 +6,7 @@
 #![feature(proc_macro_hygiene, decl_macro)]
 #![allow(unused_attributes)]
 #![allow(deprecated)]
-//remove if this is unreachable
+//remove if this is not needed
 #[macro_use] extern crate rocket;
 use rocket::routes;
 use rocket::post;
@@ -24,13 +24,13 @@ use bcrypt::{hash, verify, DEFAULT_COST};
 #[get("/add_user?<username>&<role>&<subtype>")]
 fn add_user(username: String, role: String,subtype: String) -> String {
     let time;
-    if subtype == "week" {
+    if subtype == "Week" {
         time = 7;
-    } else if subtype == "day" {
+    } else if subtype == "Day" {
         time = 1;
-    } else if subtype == "month" {
+    } else if subtype == "Month" {
         time = 30;
-    }  else if subtype == "lifetime" {
+    }  else if subtype == "Lifetime" {
         time = 36525;
     }else {
         return format!("Not a valid subtype");

