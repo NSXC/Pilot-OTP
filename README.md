@@ -1,5 +1,5 @@
 # Pilot OTP 
-
+ps I made this doc at like 3 am 
 ## Info
 
 Database is in rust
@@ -27,6 +27,5 @@ This was a project from a company to test there security and phishing training
 - AI code detections
 - Autopayment Key
 - accounts
-- maltithreads
 - fast rust backend
 
