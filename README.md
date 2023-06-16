@@ -20,3 +20,13 @@ This is not for the normal enduser
 ## Why I made this
 
 This was a project from a company to test there security and phishing training 
+
+
+##Things in this
+
+- AI code detections
+- Autopayment Key
+- accounts
+- maltithreads
+- fast rust backend
+
