@@ -15,3 +15,8 @@ This is not for the normal enduser
 - python
 - slqlite
 - mysql
+
+
+## Why I made this
+
+This was a project from a company to test there security and phishing training 
