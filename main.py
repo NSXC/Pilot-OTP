@@ -10,12 +10,12 @@ while True:
     with open('ngrok.json', 'r') as f:
         data = json.load(f)
     ngrok_url = data['ngrok_url']
-    account_sid = 'ACfa3e0cef474b5cca23924c9d72190908'
+    account_sid = 'account_sid'
     callid = None
-    auth_token = '636f830ec546c457f132cee78873141f'
-    from_number = '+15076186053'
+    auth_token = 'auth_token'
+    from_number = 'from_number'
     status_callback_url = f'{ngrok_url}/call/status'
-    telegram_bot_token = '6096442307:AAEoN0VodeJjvtmwOQzFKBqKQRMBG75wh-M'
+    telegram_bot_token = 'BOTTOKEN'
     telegram_bot = telebot.TeleBot(telegram_bot_token)
     @telegram_bot.message_handler(commands=['cashapp'])
     def cashapp_command(message):
