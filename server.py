@@ -20,12 +20,12 @@ cursor.execute('''CREATE TABLE IF NOT EXISTS purchases (
                   product_type TEXT,
                   one_time_code TEXT)''')
 conn.commit()
-account_sid = 'AC9d71968b6bf85d109997458622a27d9d'
+account_sid = 'SID'
 callid = None
-auth_token = '3de8ea71ad856404a743dac77709f8c7'
-from_number = '+18445121223'
-botid = '6096442307:AAEoN0VodeJjvtmwOQzFKBqKQRMBG75wh-M'
-model = keras.models.load_model('C:\\Users\\Josep\\OneDrive\\Desktop\\Pilot OTP\\newmod.h5')
+auth_token = 'AUTHTOKEN'
+from_number = 'NUMBER'
+botid = 'TELEGRAMBOTTOKEN'
+model = keras.models.load_model('PATHTOAIMODEL')
 app = Flask(__name__)
 @app.route("/voice/paypal", methods=['GET', 'POST'])
 def voicepaypal():
